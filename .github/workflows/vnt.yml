@@ -46,7 +46,6 @@ jobs:
         run: |
           sudo apt-get update 
           sudo apt-get install gcc-mipsel-linux-gnu
-          sudo apt-get install g++-mipsel-linux-gnu
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
@@ -61,6 +60,7 @@ jobs:
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
+          cargo clean
           cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts

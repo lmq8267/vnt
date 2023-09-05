@@ -1,0 +1,100 @@
+name: Build and Release
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      ver: ${{ steps.getversion.outputs.ver }}
+      cver: ${{ steps.getversion.outputs.cver }}
+    steps:
+      -
+        name: Get version
+        id: getversion
+        run: |
+          ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
+          vntsv=`curl https://api.github.com/repos/lbl8603/vnts/releases/latest | jq -r '.tag_name'`
+          cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
+          echo "ver=${ver}" >> $GITHUB_OUTPUT
+          echo "ver=${vntsv}" >> $GITHUB_OUTPUT
+          echo "cver=${cver}" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ubuntu-latest
+    needs: check
+    if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - TARGET: mipsel-unknown-linux-musl 
+            OS: ubuntu-latest
+            FEATURES: normal
+      runs-on: ${{ matrix.OS }}
+    env:
+      NAME: vnt-cli # change with the name of your project
+      TARGET: ${{ matrix.TARGET }}
+      OS: ${{ matrix.OS }}
+      FEATURES: ${{ matrix.FEATURES }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Init submodules
+        uses: snickerbockers/submodules-init@v4
+      - name: Cargo cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ./target
+          key: build-cargo-registry-${{matrix.TARGET}}
+      - name: List
+        run: find ./
+      - name: Install and configure dependencies
+        run: |
+          if [[ $OS =~ ^ubuntu.*$ ]]; then
+            sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
+          fi
+          # some additional configuration for cross-compilation on linux
+          cat >>~/.cargo/config <<EOF
+          [target.mipsel-unknown-linux-musl]
+          linker = "mipsel-linux-gnu-gcc"
+          rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
+          EOF
+      - name: Install rust target
+        run: rustup target add $TARGET
+          git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
+          git clone https://github.com/lbl8603/vnts -b ${{ needs.check.outputs.vntsv }} /opt/vnts
+          git clone https://github.com/lmq8267/cloudflared.git /opt/st
+          tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
+          chmod 777 /opt/upx-3.95-amd64_linux/upx
+          chmod 777 /opt/st/strip
+          mkdir -p /opt/vnt-mipsel
+          cd /opt/vnt
+          cargo build --package vnt-cli --release --verbose --target $TARGET --features $FEATURES
+          mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
+          cd /opt/vnts
+          cargo build --release --verbose --target $TARGET --features $FEATURES
+          mv ./target/$TARGET/release/vnts mkdir -p /opt/vnt-mipsel/vnts
+           cd /opt/vnt-mipsel
+          /opt/st/strip /opt/vnt-mipsel/vnt-cli
+          /opt/st/strip /opt/vnt-mipsel/vnts
+          /opt/upx-3.95-amd64_linux/upx --lzma --best vnt-cli
+          /opt/upx-3.95-amd64_linux/upx --lzma --best vnts
+          echo $(md5sum vnt-cli | awk '{print $1;}') >vnt-cli.txt
+          echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
+      - 
+        name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.c8 }}
+          tag_name: ${{ needs.check.outputs.ver }}
+          files: |
+              /opt/vnt-mipsel/vnt-cli
+              /opt/vnt-mipsel/vnt-cli.txt
+              /opt/vnt-mipsel/vnts
+              /opt/vnt-mipsel/vnts.txt
+     

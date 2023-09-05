@@ -57,14 +57,15 @@ jobs:
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st
+          git clone https://github.com/lmq8267/vnt.git /opt/vn
           tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
           chmod 777 /opt/upx-3.95-amd64_linux/upx
           chmod 777 /opt/st/strip
-          chmod 777 /opt/vnt/vnt.sh
+          chmod 777 /opt/vn/vnt.sh
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
           cargo clean
-          /opt/vnt/vnt.sh
+          /opt/vn/vnt.sh
           #cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts

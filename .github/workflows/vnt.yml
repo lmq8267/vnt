@@ -47,7 +47,6 @@ jobs:
           sudo apt-get update 
           sudo apt-get install gcc-mipsel-linux-gnu
           sudo apt-get install rustc
-          sudo apt-get install rustup
           sudo apt-get install cargo
           rustup target add mipsel-unknown-linux-musl
           cat >>/home/runner/.cargo/config <<EOF

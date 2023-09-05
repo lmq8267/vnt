@@ -45,12 +45,12 @@ jobs:
         name: Build
         run: |
           sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
+          rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-gnu-gcc"
-          rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
+          rustflags = ["-C", "target-feature=+crt-static","strip=symbols","--cfg","aes_armv8"]
           EOF
-          rustup target add mipsel-unknown-linux-musl
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st

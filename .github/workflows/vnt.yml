@@ -70,7 +70,7 @@ jobs:
           #/opt/st/strip /opt/vnt-mipsel/vnts
           /opt/upx-3.95-amd64_linux/upx --lzma --best vnt-cli
           #/opt/upx-3.95-amd64_linux/upx --lzma --best vnts
-          echo $(md5sum vnt-cli | awk '{print $1;}') >vnt-cli.txt
+          echo $(md5sum vnt-cli | awk '{print $1;}') >MD5.txt
           #echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
           - name: Release
            uses: softprops/action-gh-release@v1
@@ -79,6 +79,6 @@ jobs:
           tag_name: ${{ needs.check.outputs.ver }}
           files: |
               /opt/vnt-mipsel/vnt-cli
-              /opt/vnt-mipsel/vnt-cli.txt
+              /opt/vnt-mipsel/MD5.txt
               #/opt/vnt-mipsel/vnts
               #/opt/vnt-mipsel/vnts.txt

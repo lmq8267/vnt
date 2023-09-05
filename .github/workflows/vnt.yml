@@ -41,13 +41,13 @@ jobs:
       - name: List
         run: find ./
       - name: Install and configure dependencies
-           run:|
+        run: |
             sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gn
-          cat >>~/.cargo/config <<EOF
-          [target.mipsel-unknown-linux-musl]
-          linker = "mipsel-linux-gnu-gcc"
-          rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
-          EOF
+            cat >>~/.cargo/config <<EOF
+            [target.mipsel-unknown-linux-musl]
+            linker = "mipsel-linux-gnu-gcc"
+            rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
+            EOF
       - name: Install rust target
         run: rustup target add $TARGET
       - name: List target

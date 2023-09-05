@@ -45,7 +45,7 @@ jobs:
       - 
         name: Build
         run: |
-          sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gn
+          sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-gnu-gcc"

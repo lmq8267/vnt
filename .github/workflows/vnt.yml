@@ -53,7 +53,7 @@ jobs:
           EOF
           rustup target add mipsel-unknown-linux-musl
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
-          git clone https://github.com/lbl8603/vnts -b ${{ needs.check.outputs.vntsv }} /opt/vnts
+          git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st
           tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
           chmod 777 /opt/upx-3.95-amd64_linux/upx

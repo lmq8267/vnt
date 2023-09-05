@@ -51,7 +51,7 @@ jobs:
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
-          linker = "mipsel-linux-gnu-gcc"
+          linker = "/opt/vn/mipsel-linux-musl-gcc"
           rustflags = ["-C", "target-feature=+crt-static","strip=symbols","--cfg","aes_armv8"]
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt

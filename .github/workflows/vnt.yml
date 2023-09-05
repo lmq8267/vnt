@@ -74,8 +74,7 @@ jobs:
           /opt/upx-3.95-amd64_linux/upx --lzma --best vnts
           echo $(md5sum vnt-cli | awk '{print $1;}') >vnt-cli.txt
           echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
-      - 
-        name: Release
+      - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.c8 }}

@@ -45,29 +45,21 @@ jobs:
         name: Build
         run: |
           sudo apt-get update 
-          sudo apt-get install gcc-mipsel-linux-gnu
-          sudo apt-get install rustc
-          sudo apt-get install cargo
+          sudo apt-get install gcc-mipsel-linux-gn
           rustup target add mipsel-unknown-linux-musl
-          cat >>/home/runner/.cargo/config <<EOF
+          cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
-          linker = "/opt/vn/mipsel-linux-musl-gcc"
+          linker = "mipsel-linux-gnu-gcc"
           rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st
-          git clone https://github.com/lmq8267/vnt.git /opt/vn
           tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
           chmod 777 /opt/upx-3.95-amd64_linux/upx
           chmod 777 /opt/st/strip
-          chmod 777 /opt/vn/vnt.sh
           mkdir -p /opt/vnt-mipsel
-          cd /opt/vnt
-          cargo clean
-          #/opt/vn/vnt.sh
-          cargo -V
-          /home/runner/.cargo/bin/cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
+          cd /opt/vntcargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/mipsel-unknown-linux-musl/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts
           #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal

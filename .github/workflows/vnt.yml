@@ -41,7 +41,7 @@ jobs:
       - name: List
         run: find ./
       - name: Install and configure dependencies
-         run: |
+           run:|
             sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gn
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]

@@ -32,7 +32,7 @@ jobs:
           - TARGET: mipsel-unknown-linux-musl 
             OS: ubuntu-latest
             FEATURES: normal
-      runs-on: ${{ matrix.OS }}
+      runs-on: ubuntu-latest
     env:
       NAME: vnt-cli # change with the name of your project
       TARGET: ${{ matrix.TARGET }}

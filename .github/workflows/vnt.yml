@@ -20,7 +20,7 @@ jobs:
           vntsv=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
           cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
           echo "ver=${ver}" >> $GITHUB_OUTPUT
-          echo "ver=${vntsv}" >> $GITHUB_OUTPUT
+          echo "vntsv=${vntsv}" >> $GITHUB_OUTPUT
           echo "cver=${cver}" >> $GITHUB_OUTPUT
 
   build:

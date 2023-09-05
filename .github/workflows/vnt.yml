@@ -44,7 +44,8 @@ jobs:
       - 
         name: Build
         run: |
-          sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
+          sudo apt-get update 
+          sudo apt-get install -qq musl-tools gcc-mipsel-linux-gnu
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
@@ -59,7 +60,6 @@ jobs:
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
-          rustup target add mipsel-unknown-linux-musl
           cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts

@@ -32,11 +32,10 @@ jobs:
           - TARGET: mipsel-unknown-linux-musl 
             OS: ubuntu-latest
             FEATURES: normal
-      runs-on: ubuntu-latest
     env:
       NAME: vnt-cli # change with the name of your project
       TARGET: ${{ matrix.TARGET }}
-      OS: ${{ matrix.OS }}
+      OS: ubuntu-latest
       FEATURES: ${{ matrix.FEATURES }}
     steps:
       - uses: actions/checkout@v2
@@ -53,9 +52,9 @@ jobs:
         run: find ./
       - name: Install and configure dependencies
         run: |
-          if [[ $OS =~ ^ubuntu.*$ ]]; then
+          
             sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
-          fi
+          
           # some additional configuration for cross-compilation on linux
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]

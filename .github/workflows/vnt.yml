@@ -45,7 +45,7 @@ jobs:
         name: Build
         run: |
           sudo apt-get update 
-          sudo apt-get install gcc-mipsel-linux-gn
+          sudo apt-get install gcc-mipsel-linux-gnu
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]

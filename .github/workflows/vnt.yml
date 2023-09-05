@@ -60,10 +60,10 @@ jobs:
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
-          cargo build --package vnt-cli --release --verbose --target $TARGET --features $FEATURES
+          cargo build --package vnt-cli --release --verbose --target mipsel-unknown-linux-musl --features normal
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           cd /opt/vnts
-          cargo build --release --verbose --target $TARGET --features $FEATURES
+          cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal
           mv ./target/$TARGET/release/vnts mkdir -p /opt/vnt-mipsel/vnts
            cd /opt/vnt-mipsel
           /opt/st/strip /opt/vnt-mipsel/vnt-cli

@@ -1,85 +1,183 @@
-name: Build and Release
+name: Rust
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    #- cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    outputs:
-      ver: ${{ steps.getversion.outputs.ver }}
-      cver: ${{ steps.getversion.outputs.cver }}
-    steps:
-      -
-        name: Get version
-        id: getversion
-        run: |
-          ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
-          #vntsv=`curl https://api.github.com/repos/lbl8603/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4`
-          cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
-          echo "ver=${ver}" >> $GITHUB_OUTPUT
-          echo "cver=${cver}" >> $GITHUB_OUTPUT
+#  test:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Cargo cache
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            ./target
+#          key: test-cargo-registry
+#      - name: List
+#        run: find ./
+#      - name: Run tests
+#        run: cargo test --verbose
 
   build:
-    runs-on: ubuntu-latest
-    needs: check
-    if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # a list of all the targets
+        include:
+          - TARGET: i686-unknown-linux-musl # test in an alpine container on a mac
+            OS: ubuntu-latest
+            FEATURES: normal
+          - TARGET: x86_64-unknown-linux-gnu # tested in a debian container on a mac
+            OS: ubuntu-latest
+            FEATURES: ring-cipher
+          - TARGET: x86_64-unknown-linux-musl # test in an alpine container on a mac
+            OS: ubuntu-latest
+            FEATURES: ring-cipher
+          - TARGET: aarch64-unknown-linux-gnu # tested on aws t4g.nano
+            OS: ubuntu-latest
+            FEATURES: ring-cipher
+          - TARGET: aarch64-unknown-linux-musl # tested on aws t4g.nano in alpine container
+            OS: ubuntu-latest
+            FEATURES: normal
+          - TARGET: armv7-unknown-linux-gnueabihf # raspberry pi 2-3-4, not tested
+            OS: ubuntu-latest
+            FEATURES: ring-cipher
+          - TARGET: armv7-unknown-linux-musleabihf # raspberry pi 2-3-4, not tested
+            OS: ubuntu-latest
+            FEATURES: normal
+          - TARGET: arm-unknown-linux-gnueabihf # raspberry pi 0-1, not tested
+            OS: ubuntu-latest
+            FEATURES: ring-cipher
+          - TARGET: arm-unknown-linux-musleabihf # raspberry pi 0-1, not tested
+            OS: ubuntu-latest
+            FEATURES: normal
+          - TARGET: x86_64-apple-darwin # tested on a mac, is not properly signed so there are security warnings
+            OS: macos-latest
+            FEATURES: ring-cipher
+          - TARGET: aarch64-apple-darwin # tested on a mac, is not properly signed so there are security warnings
+            OS: macos-latest
+            FEATURES: ring-cipher
+          - TARGET: i686-pc-windows-msvc # tested on a windows machine
+            OS: windows-latest
+            FEATURES: ring-cipher
+          - TARGET: x86_64-pc-windows-msvc # tested on a windows machine
+            OS: windows-latest
+            FEATURES: ring-cipher
+    # needs: test
+    runs-on: ${{ matrix.OS }}
+    env:
+      NAME: vnts # change with the name of your project
+      TARGET: ${{ matrix.TARGET }}
+      OS: ${{ matrix.OS }}
+      FEATURES: ${{ matrix.FEATURES }}
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-      - name: Init submodules
-        uses: snickerbockers/submodules-init@v4
+      - uses: actions/checkout@v2
       - name: Cargo cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/registry
             ./target
-          key: build-cargo-registry-mipsel-unknown-linux-musl
+          key: build-cargo-registry-${{matrix.TARGET}}
       - name: List
         run: find ./
-      - 
-        name: Build
+      - name: Install and configure dependencies
         run: |
-          sudo apt-get update 
-          sudo apt-get install -qq musl-tools gcc-mipsel-linux-gnu
-          rustup target add mipsel-unknown-linux-musl
-          rustup component add llvm-tools-preview
+          # dependencies are only needed on ubuntu as that's the only place where
+          # we make cross-compilation
+          if [[ $OS =~ ^ubuntu.*$ ]]; then
+            sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gnu
+          fi
+
+          # some additional configuration for cross-compilation on linux
           cat >>~/.cargo/config <<EOF
+          [target.x86_64-unknown-linux-musl]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.aarch64-unknown-linux-gnu]
+          linker = "aarch64-linux-gnu-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.aarch64-unknown-linux-musl]
+          linker = "aarch64-linux-gnu-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.armv7-unknown-linux-gnueabihf]
+          linker = "arm-linux-gnueabihf-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.armv7-unknown-linux-musleabihf]
+          linker = "arm-linux-gnueabihf-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.arm-unknown-linux-gnueabihf]
+          linker = "arm-linux-gnueabihf-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.arm-unknown-linux-musleabihf]
+          linker = "arm-linux-gnueabihf-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-gnu-gcc"
-          rustflags = ["-C", "target-feature=+crt-static","strip=symbols","--cfg","aes_armv8"]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          [target.x86_64-pc-windows-msvc]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]    
+          [target.i686-pc-windows-msvc]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]      
+          [target.x86_64-apple-darwin]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"] 
+          [target.aarch64-apple-darwin]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]     
+          [target.i686-unknown-linux-musl]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]    
+          [target.x86_64-unknown-linux-gnu]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
           EOF
-          git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
-          #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
-          git clone https://github.com/lmq8267/cloudflared.git /opt/st
-          tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
-          chmod 777 /opt/upx-3.95-amd64_linux/upx
-          chmod 777 /opt/st/strip
-          mkdir -p /opt/vnt-mipsel
-          cd /opt/vnt
-          cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
-          mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
-          #cd /opt/vnts
-          #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal
-          #mv ./target/$TARGET/release/vnts mkdir -p /opt/vnt-mipsel/vnts
-           cd /opt/vnt-mipsel
-          /opt/st/strip /opt/vnt-mipsel/vnt-cli
-          #/opt/st/strip /opt/vnt-mipsel/vnts
-          /opt/upx-3.95-amd64_linux/upx --lzma --best vnt-cli
-          #/opt/upx-3.95-amd64_linux/upx --lzma --best vnts
-          echo $(md5sum vnt-cli | awk '{print $1;}') >vnt-cli.txt
-          #echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
-          - name: Release
-           uses: softprops/action-gh-release@v1
-          with:
-          token: ${{ secrets.c8 }}
-          tag_name: ${{ needs.check.outputs.ver }}
-          files: |
-              /opt/vnt-mipsel/vnt-cli
-              /opt/vnt-mipsel/vnt-cli.txt
-              #/opt/vnt-mipsel/vnts
-              #/opt/vnt-mipsel/vnts.txt
+      - name: Install rust target
+        run: rustup target add $TARGET
+      - name: Run build
+        run: cargo build --release --verbose --target $TARGET --features $FEATURES
+      - name: List target
+        run: find ./target
+      - name: Compress
+        run: |
+          mkdir -p ./artifacts
+          # windows is the only OS using a different convention for executable file name
+          if [[ $OS =~ ^windows.*$ ]]; then
+              EXEC=$NAME.exe
+          else
+              EXEC=$NAME
+          fi
+          if [[ $GITHUB_REF_TYPE =~ ^tag$ ]]; then
+            TAG=$GITHUB_REF_NAME
+          else
+            TAG=$GITHUB_SHA
+          fi
+          mv ./target/$TARGET/release/$EXEC ./$EXEC
+          tar -czf ./artifacts/$NAME-$TARGET-$TAG.tar.gz $EXEC
+      - name: Archive artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: vnts
+          path: |
+            ./artifacts
+
+  # deploys to github releases on tag
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: vnts
+          path: ./artifacts
+      - name: List
+        run: find ./artifacts
+      - name: Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.c8 }}
+          file: ./artifacts/*.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true

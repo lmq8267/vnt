@@ -72,9 +72,10 @@ jobs:
           #/opt/upx-3.95-amd64_linux/upx --lzma --best vnts
           echo $(md5sum vnt-cli | awk '{print $1;}') >MD5.txt
           #echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
-          - name: Release
-           uses: softprops/action-gh-release@v1
-          with:
+      - 
+        name: Release
+        uses: softprops/action-gh-release@v1
+        with:
           token: ${{ secrets.c8 }}
           tag_name: ${{ needs.check.outputs.ver }}
           files: |

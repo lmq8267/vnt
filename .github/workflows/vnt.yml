@@ -7,10 +7,11 @@ on:
 
 jobs:
   check:
-    outputs:
+  runs-on: ubuntu-latest
+  outputs :
       ver: ${{ steps.getversion.outputs.ver }}
       cver: ${{ steps.getversion.outputs.cver }}
-    steps:
+steps:
       -
         name: Get version
         id: getversion
@@ -20,9 +21,8 @@ jobs:
           cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
           echo "ver=${ver}" >> $GITHUB_OUTPUT
           echo "ver=${vntsv}" >> $GITHUB_OUTPUT
-          echo "cver=${cver}" >> $GITHUB_OUTPUT
-
-  build:
+          echo "cver=${cver}" >> $GITHUB_OUTPU
+    build:
     runs-on: ubuntu-latest
     needs: check
     if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}

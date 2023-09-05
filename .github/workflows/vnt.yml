@@ -46,6 +46,8 @@ jobs:
         run: |
           sudo apt-get update 
           sudo apt-get install gcc-mipsel-linux-gnu
+          sudo apt-get remove rustc
+          sudo apt-get install rustc
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]

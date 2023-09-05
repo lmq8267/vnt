@@ -7,7 +7,6 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
     outputs:
       ver: ${{ steps.getversion.outputs.ver }}
       cver: ${{ steps.getversion.outputs.cver }}

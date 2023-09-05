@@ -49,7 +49,7 @@ jobs:
           sudo apt-get remove rustc
           sudo apt-get install rustc
           rustup target add mipsel-unknown-linux-musl
-          cat >>/home/runner/.cargo/config <<EOF
+          cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-gnu-gcc"
           rustflags = ["-C", "target-feature=+crt-static","strip=symbols","--cfg","aes_armv8"]

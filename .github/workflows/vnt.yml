@@ -59,6 +59,7 @@ jobs:
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
+          rustup target add mipsel-unknown-linux-musl
           cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts

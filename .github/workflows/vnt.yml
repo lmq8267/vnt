@@ -61,7 +61,7 @@ jobs:
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
           cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
-          mv ./target/mipsel-unknown-linux-musl/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
+          cp -f /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts
           #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal
           #mv ./target/$TARGET/release/vnts mkdir -p /opt/vnt-mipsel/vnts

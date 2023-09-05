@@ -60,10 +60,12 @@ jobs:
           tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
           chmod 777 /opt/upx-3.95-amd64_linux/upx
           chmod 777 /opt/st/strip
+          chmod 777 /opt/vnt/vnt.sh
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
           cargo clean
-          cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
+          /opt/vnt/vnt.sh
+          #cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/$TARGET/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts
           #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal

@@ -49,7 +49,7 @@ jobs:
           sudo apt-get install rustc
           sudo apt-get install cargo
           rustup target add mipsel-unknown-linux-musl
-          cat >>~/.cargo/config <<EOF
+          cat >>/home/runner/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "/opt/vn/mipsel-linux-musl-gcc"
           rustflags = ["-C", "target-feature=+crt-static","strip=symbols","--cfg","aes_armv8"]
@@ -67,7 +67,7 @@ jobs:
           cargo clean
           #/opt/vn/vnt.sh
           cargo -V
-          cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
+          /home/runner/.cargo/bin/cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/mipsel-unknown-linux-musl/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts
           #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal

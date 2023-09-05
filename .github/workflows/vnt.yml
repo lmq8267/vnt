@@ -2,56 +2,56 @@ name: Build and Release
 
 on:
   schedule:
-  - cron: '0 3 * * *'
+    - cron: '0 3 * * *'
   workflow_dispatch:
+
 jobs:
- check:
-     runs-on: ubuntu-latest
-     outputs :
+  check:
+    runs-on: ubuntu-latest
+    outputs:
       ver: ${{ steps.getversion.outputs.ver }}
       cver: ${{ steps.getversion.outputs.cver }}
-     steps :
-     - name: Get version
-       id: getversion
-       run: |
+    steps:
+      -
+        name: Get version
+        id: getversion
+        run: |
           ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
-          vntsv=`curl https://api.github.com/repos/lbl8603/vnts/releases/latest | jq -r '.tag_name'`
+          vntsv=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
           cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
           echo "ver=${ver}" >> $GITHUB_OUTPUT
           echo "ver=${vntsv}" >> $GITHUB_OUTPUT
           echo "cver=${cver}" >> $GITHUB_OUTPUT
-     build:
-          runs-on: ubuntu-latest
-          needs: check
-          if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
-          steps:
-          - name: Checkout
-            uses: actions/checkout@v3
-          - name: Init submodules
-            uses: snickerbockers/submodules-init@v4
-          - name: Cargo cache
-            uses: actions/cache@v2
-     with:
+
+  build:
+    runs-on: ubuntu-latest
+    needs: check
+    if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      - name: Init submodules
+        uses: snickerbockers/submodules-init@v4
+      - name: Cargo cache
+        uses: actions/cache@v2
+        with:
           path: |
             ~/.cargo/registry
             ./target
           key: build-cargo-registry-mipsel-unknown-linux-musl
-           - name: List
-          run: find ./
-          - name: Install and configure dependencies
-          run: |
-            sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gn
-            cat >>~/.cargo/config <<EOF
-            [target.mipsel-unknown-linux-musl]
-            linker = "mipsel-linux-gnu-gcc"
-            rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
-            EOF
-          - name: Install rust target
-          run: rustup target add $TARGET
-          - name: List target
-          run: find ./target
-          - name: Compress
-          run: |
+      - name: List
+        run: find ./
+      - 
+        name: Build
+        run: |
+          sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools gcc-mipsel-linux-gn
+          cat >>~/.cargo/config <<EOF
+          [target.mipsel-unknown-linux-musl]
+          linker = "mipsel-linux-gnu-gcc"
+          rustflags = ["-C", "target-feature=+crt-static", "strip=symbols","--cfg","aes_armv8"]
+          EOF
+          rustup target add mipsel-unknown-linux-musl
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           git clone https://github.com/lbl8603/vnts -b ${{ needs.check.outputs.vntsv }} /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st
@@ -82,4 +82,3 @@ jobs:
               /opt/vnt-mipsel/vnt-cli.txt
               /opt/vnt-mipsel/vnts
               /opt/vnt-mipsel/vnts.txt
-     

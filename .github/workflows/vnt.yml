@@ -59,7 +59,8 @@ jobs:
           chmod 777 /opt/upx-3.95-amd64_linux/upx
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
-          cd /opt/vntcargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
+          cd /opt/vnt
+          cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
           mv ./target/mipsel-unknown-linux-musl/release/vnt-cli mkdir -p /opt/vnt-mipsel/vnt-cli
           #cd /opt/vnts
           #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal

@@ -47,6 +47,7 @@ jobs:
           sudo apt-get update 
           sudo apt-get install -qq musl-tools gcc-mipsel-linux-gnu
           rustup target add mipsel-unknown-linux-musl
+          rustup component add llvm-tools-preview
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-gnu-gcc"

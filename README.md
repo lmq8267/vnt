@@ -4,4 +4,4 @@
 下载 点右边的releases
 
 
-https://github.com/lbl8603/vnt/releases
+更新说明https://github.com/lbl8603/vnt/releases

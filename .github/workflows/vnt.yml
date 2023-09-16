@@ -1,4 +1,4 @@
-name: Build and Release
+name: 编译mipsel版vnt-cli
 
 on:
   schedule:
@@ -13,7 +13,7 @@ jobs:
       cver: ${{ steps.getversion.outputs.cver }}
     steps:
       -
-        name: Get version
+        name: 检查更新
         id: getversion
         run: |
           ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
@@ -28,7 +28,7 @@ jobs:
     if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
     steps:
       -
-        name: Checkout
+        name: 检查代码仓库
         uses: actions/checkout@v3
       - name: Init submodules
         uses: snickerbockers/submodules-init@v4
@@ -42,7 +42,7 @@ jobs:
       - name: List
         run: find ./
       - 
-        name: Build
+        name: 编译
         run: |
           sudo apt-get update 
           sudo apt-get install gcc-mipsel-linux-gnu
@@ -73,7 +73,7 @@ jobs:
           echo $(md5sum vnt-cli | awk '{print $1;}') >MD5.txt
           #echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
       - 
-        name: Release
+        name: 发布
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.c8 }}
@@ -83,3 +83,10 @@ jobs:
               /opt/vnt-mipsel/MD5.txt
               #/opt/vnt-mipsel/vnts
               #/opt/vnt-mipsel/vnts.txt
+      - 
+       name: 删除工作流
+       uses: GitRML/delete-workflow-runs@main
+       with:
+        token: ${{ secrets.c8 }}
+        retain_days: 2
+        keep_minimum_runs: 0

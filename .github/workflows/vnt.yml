@@ -44,13 +44,15 @@ jobs:
       - 
         name: 编译
         run: |
-          sudo apt-get update 
-          sudo apt-get install gcc-mipsel-linux-gnu
+          mkdir -p ./musl_gcc 
+          wget -c https://musl.cc/mipsel-linux-musl-cross.tgz -P ./musl_gcc/
+          tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
+          sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/
           rustup target add mipsel-unknown-linux-musl
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
-          linker = "mipsel-linux-gnu-gcc"
-          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","--cfg","aes_armv8"]
+          linker = "mipsel-linux-musl-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts

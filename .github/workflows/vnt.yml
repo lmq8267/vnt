@@ -55,25 +55,18 @@ jobs:
           rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
-          #git clone https://github.com/lbl8603/vnts -b $vntsv /opt/vnts
           git clone https://github.com/lmq8267/cloudflared.git /opt/st
           tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
           chmod 777 /opt/upx-3.95-amd64_linux/upx
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
-          cargo build --package vnt-cli --target=mipsel-unknown-linux-musl --release
+          cargo build --package vnt-cli --verbose --target=mipsel-unknown-linux-musl --release --features openssl-vendored
           cp -f /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/vnt-mipsel/vnt-cli
-          #cd /opt/vnts
-          #cargo build --release --verbose --target mipsel-unknown-linux-musl --features normal
-          #mv ./target/$TARGET/release/vnts mkdir -p /opt/vnt-mipsel/vnts
            cd /opt/vnt-mipsel
           /opt/st/strip /opt/vnt-mipsel/vnt-cli
-          #/opt/st/strip /opt/vnt-mipsel/vnts
           /opt/upx-3.95-amd64_linux/upx --lzma --best vnt-cli
-          #/opt/upx-3.95-amd64_linux/upx --lzma --best vnts
           echo $(md5sum vnt-cli | awk '{print $1;}') >MD5.txt
-          #echo $(md5sum vnts | awk '{print $1;}') >vnts.txt
       - 
         name: 发布
         uses: softprops/action-gh-release@v1
@@ -83,8 +76,6 @@ jobs:
           files: |
               /opt/vnt-mipsel/vnt-cli
               /opt/vnt-mipsel/MD5.txt
-              #/opt/vnt-mipsel/vnts
-              #/opt/vnt-mipsel/vnts.txt
       - 
        name: 删除工作流
        uses: GitRML/delete-workflow-runs@main

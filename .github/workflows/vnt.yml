@@ -61,6 +61,7 @@ jobs:
           chmod 777 /opt/st/strip
           mkdir -p /opt/vnt-mipsel
           cd /opt/vnt
+          sudo apt-get update && sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf musl-tools
           cargo build --package vnt-cli --verbose --target=mipsel-unknown-linux-musl --release --features openssl-vendored
           cp -f /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/vnt-mipsel/vnt-cli
            cd /opt/vnt-mipsel

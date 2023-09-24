@@ -85,6 +85,8 @@ jobs:
            vnt-cli ：正常版 MD5.txt为其MD5检验值 
            
            vnt-cli_lite ：去掉openssl的精简版 lite_MD5.txt为其MD5校验值
+
+           如果使用加密，则集成openssl的速度更快，不加密是否集成openssl都不影响速度。
           tag_name: ${{ needs.check.outputs.ver }}
           files: |
               /opt/vnt-mipsel/vnt-cli

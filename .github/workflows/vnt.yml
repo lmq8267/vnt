@@ -4,7 +4,8 @@ on:
   schedule:
     - cron: '0 3,20 * * *'
   workflow_dispatch:
-
+env:
+  TZ: Asia/Shanghai
 jobs:
   check:
     runs-on: ubuntu-latest

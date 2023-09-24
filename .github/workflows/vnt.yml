@@ -76,12 +76,15 @@ jobs:
           /opt/st/strip /opt/vnt1/vnt-cli_lite
           /opt/upx-3.95-amd64_linux/upx --lzma --best vnt-cli_lite
           echo $(md5sum vnt-cli_lite | awk '{print $1;}') >lite_MD5.txt
+          echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
       - 
         name: 发布
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.c8 }}
           body: |
+           编译时间 ：${{ env.build_time }}
+           
            vnt-cli ：正常版 MD5.txt为其MD5检验值 
            
            vnt-cli_lite ：去掉openssl的精简版 lite_MD5.txt为其MD5校验值

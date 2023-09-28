@@ -1,0 +1,112 @@
+name: 编译mipsel版vnt-cli
+
+on:
+  schedule:
+    - cron: '0 3,20 * * *'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  TZ: Asia/Shanghai
+  
+jobs:
+ check:
+  runs-on: ubuntu-latest
+  outputs:
+    ver: ${{ steps.getversion.outputs.ver }}
+    cver: ${{ steps.getversion.outputs.cver }}
+  steps:
+  - name: 检查更新
+    id: getversion
+    run: |
+      ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
+      cver=`curl https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | jq -r '.tag_name'`
+      echo "ver=${ver}" >> $GITHUB_OUTPUT
+      echo "cver=${cver}" >> $GITHUB_OUTPUT
+ build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - FEATURES: --no-default-features
+            NAME: lite
+          - FEATURES: --no-default-features --features openssl-vendored,aes_ecb,server_encrypt
+            NAME: openssl
+          - FEATURES: --features default
+            NAME: default
+          - FEATURES: --features openssl-vendored
+            NAME: full
+    env:
+      FEATURES: ${{ matrix.FEATURES }}
+      NAME: ${{ matrix.NAME }}
+    needs: check
+    if: ${{ needs.check.outputs.ver != needs.check.outputs.cver }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: 初始化环境
+        uses: snickerbockers/submodules-init@v4
+      - name: 设置cargo缓存
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ./target
+          key: build-cargo-registry-mipsel-unknown-linux-musl
+      - name: 配置编译工具链
+        run: |
+          mkdir -p ./musl_gcc 
+          wget -c https://musl.cc/mipsel-linux-musl-cross.tgz -P ./musl_gcc/
+          tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
+          sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/
+          rustup target add mipsel-unknown-linux-musl
+          cat >>~/.cargo/config <<EOF
+          [target.mipsel-unknown-linux-musl]
+          linker = "mipsel-linux-musl-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]
+          EOF
+      - name: 开始编译
+        run: |
+         git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
+         cd /opt/vnt
+         echo $FEATURES
+         cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl $FEATURES
+      - name: 压缩
+        run: |
+          mkdir -p /opt/mipsel 
+          git clone https://github.com/lmq8267/cloudflared.git /opt/st
+          tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
+          chmod 777 /opt/upx-3.95-amd64_linux/upx
+          chmod 777 /opt/st/strip
+          cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_$NAME
+          cd /opt/mipsel
+          /opt/st/strip /opt/mipsel/vnt-cli_$NAME
+          /opt/upx-3.95-amd64_linux/upx vnt-cli_$NAME
+          echo $(md5sum /opt/mipsel/vnt-cli_${NAME} | awk '{print $1;}') >${NAME}_MD5.txt
+          echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+      - name: 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.c8 }}
+          body: |
+           编译时间 ：${{ env.build_time }}
+
+           各版本区别：vnt-cli_**
+           
+           openssl ：集成openssl-aes_ecb加密带服务器验证，排除默认的其他加密  openssl_MD5.txt为其MD5检验值 
+           lite ：不集成任何加密 lite_MD5.txt为其MD5检验值
+           default ：排除openssl只使用默认加密 default_MD5.txt为其MD5检验值
+           full ：集成所有加密方式 full_MD5.txt为其MD5检验值
+
+           如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
+           详细加密方式介绍：https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91
+          tag_name: ${{ needs.check.outputs.ver }}
+          files: |
+              /opt/mipsel/*
+      - 
+       name: 删除工作流
+       uses: GitRML/delete-workflow-runs@main
+       with:
+        token: ${{ secrets.c8 }}
+        retain_days: 2
+        keep_minimum_runs: 0

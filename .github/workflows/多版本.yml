@@ -46,7 +46,7 @@ jobs:
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-musl-gcc"
-          rustflags = ["-C", "target-feature=+crt-static","-C"]
+          rustflags = ["-C", "target-feature=+crt-static"]
 
           [target.armv7-unknown-linux-gnueabihf]
           linker = "arm-unknown-linux-gnueabi-gcc"

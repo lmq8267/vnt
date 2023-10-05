@@ -20,7 +20,7 @@ jobs:
     id: getversion
     run: |
       ver=`curl https://api.github.com/repos/lbl8603/vnt/releases/latest | jq -r '.tag_name'`
-      cver=`curl https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | jq -r '.tag_name'`
+      cver=`curl https://api.github.com/repos/lmq8267/vnt/releases/latest | jq -r '.tag_name'`
       echo "ver=${ver}" >> $GITHUB_OUTPUT
       echo "cver=${cver}" >> $GITHUB_OUTPUT
  build:
@@ -113,7 +113,7 @@ jobs:
            如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
            [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/lbl8603/vnt/releases)
            
-          tag_name: 1.2.5
+          tag_name: ${{ needs.check.outputs.ver }}
           files: |
               /opt/mipsel/*
       - 

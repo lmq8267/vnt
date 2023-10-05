@@ -106,11 +106,9 @@ jobs:
            ### **各版本区别：**
            
            - **openssl** ：只集成openssl，aes_ecb，aes-gcb，服务器验证
-           - **lite** ：不集成任何加密
-           - **default** ：排除openssl只使用默认加密 
-           - **full** ：集成所有加密方式
-           
-           - **ds213j** ：群晖ds213j的
+           - **lite**    ：不集成任何加密
+           - **default** ：排除openssl 只使用默认加密 
+           - **full**    ：集成所有加密方式
            
            如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
            [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/lbl8603/vnt/releases)

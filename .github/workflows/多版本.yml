@@ -65,7 +65,7 @@ jobs:
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features default
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_default
           cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored
+          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored,ring-cipher
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_full
           cargo clean
           #编译群晖ds213j版

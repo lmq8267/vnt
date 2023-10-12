@@ -116,7 +116,8 @@ jobs:
            
            如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
            [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/lbl8603/vnt/releases)
-           
+
+           [其他平台压缩版](https://github.com/lmq8267/vnt-cli/releases)
           tag_name: ${{ needs.check.outputs.ver }}
           files: |
               /opt/mipsel/*

@@ -86,10 +86,10 @@ jobs:
           /opt/st/strip /opt/mipsel/vnt-cli_default
           /opt/st/strip /opt/mipsel/vnt-cli_full
           du -ha
-          /opt/upx-3.95-amd64_linux/upx /opt/mipsel/vnt-cli_lite
-          #/opt/upx-3.95-amd64_linux/upx /opt/mipsel/vnt-cli_openssl
-          /opt/upx-3.95-amd64_linux/upx /opt/mipsel/vnt-cli_default
-          /opt/upx-3.95-amd64_linux/upx /opt/mipsel/vnt-cli_full
+          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_lite
+          #/opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_openssl
+          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_default
+          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_full
           du -ha
           #echo $(md5sum /opt/mipsel/vnt-cli_${NAME} | awk '{print $1;}') >${NAME}_MD5.txt
           echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV

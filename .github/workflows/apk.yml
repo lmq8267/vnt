@@ -1,0 +1,45 @@
+name: build-android-vnt
+
+on:
+   workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: 设置 JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: 构建 APK
+        run: |
+         git clone https://github.com/lbl8603/VntApp /opt/vnt-android
+         cd /opt/vnt-android
+         sed -i 's|7.2|6.9|g' ./gradle/wrapper/gradle-wrapper.properties
+         bash ./gradlew assemble
+      - name: vnt
+        run: |
+         cd /opt/vnt-android/app/build/outputs/apk
+         mkdir -p /opt/vnt
+         mv /opt/vnt-android/app/build/outputs/apk/debug/app-debug.apk /opt/vnt/app-debug.apk
+         mv /opt/vnt-android/app/build/outputs/apk/preview/app-preview-unsigned.apk /opt/vnt/app-preview-unsigned.apk
+         mv /opt/vnt-android/app/build/outputs/apk/release/app-release-unsigned.apk /opt/vnt/app-release-unsigned.apk
+         cd /opt/vnt
+         #进行随机签名
+         password=$(openssl rand -base64 16)
+         #生成随机签名文件keystore.jks
+         keytool -genkey -v -keystore keystore.jks -storepass $password -alias key -keypass $password -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=$(openssl rand -hex 4), OU=$(openssl rand -hex 4), O=$(openssl rand -hex 4), L=$(openssl rand -hex 4), ST=$(openssl rand -hex 4), C=$(openssl rand -hex 2)"
+         #签名apk
+         jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
+         jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
+         
+         cd /opt
+         zip -r vnt-android.zip /opt/vnt
+         du -k /opt/vnt/*
+      - name : 上传
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+         name: apk
+         path: /opt/vnt-android.zip

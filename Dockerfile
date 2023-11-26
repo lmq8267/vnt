@@ -1,4 +1,4 @@
-FROM busybox:latest
+FROM alpine:latest
 ARG TARGETARCH
 ARG TARGETVARIANT
 

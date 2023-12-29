@@ -52,8 +52,8 @@ jobs:
           linker = "arm-unknown-linux-gnueabi-gcc"
           #rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]  #编译静态选项 默认编译动态版
           EOF
-          #git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
-          git clone https://github.com/lbl8603/vnt.git /opt/vnt
+          git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
+          #git clone https://github.com/lbl8603/vnt.git /opt/vnt
           cd /opt/vnt
           sed -i 's|0.9.25|0.8.26|g' ./vnt-cli/Cargo.toml
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features

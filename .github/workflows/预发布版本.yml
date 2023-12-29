@@ -37,7 +37,7 @@ jobs:
           EOF
           git clone https://github.com/lbl8603/vnt.git /opt/vnt
           cd /opt/vnt
-          echo "tag=$(grep -o 'version = "[^"]*' ./src/service/main_service/common.rs | sed 's/version = "//')" >> $GITHUB_ENV
+          echo "tag=$(grep -o 'version = "[^"]*' ./common/Cargo.toml | sed 's/version = "//')" >> $GITHUB_ENV
           sed -i 's|0.9.25|0.8.26|g' ./vnt-cli/Cargo.toml
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite

@@ -36,6 +36,7 @@ jobs:
           mkdir -p ./musl_gcc 
           mkdir -p /opt/mipsel
           mkdir -p /opt/ds213j
+          sudo timedatectl set-timezone "Asia/Shanghai"
           wget -c https://musl.cc/mipsel-linux-musl-cross.tgz -P ./musl_gcc/
           tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
           sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/

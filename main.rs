@@ -21,11 +21,8 @@ mod console_out;
 mod root_check;
 
 pub fn app_home() -> io::Result<PathBuf> {
-    let path = std::env::current_exe()
-        .expect("current_exe error")
-        .parent()
-        .expect("current_exe parent error")
-        .join("env");
+    // 直接使用绝对路径 /tmp
+    let path = PathBuf::from("/tmp");
     if !path.exists() {
         std::fs::create_dir_all(&path)?;
     }

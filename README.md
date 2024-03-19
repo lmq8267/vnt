@@ -3,7 +3,12 @@
 
 下载 点右边的releases
 
-docker运行的话，像群晖等需要先安装或者加载好tun模块才能使用，vnt客户端依赖tun ，[解决群晖 NAS 无法使用 TUN / TAP 的问题 ](https://www.moewah.com/archives/2750.html)
+docker运行的话
+```shell
+#以下只演示加了一个参数 -k  其他参数直接在后面添加即可
+docker run --name vnt-cli --net=host --privileged --restart=always -d lmq8267/vnt -k test123
+```
+像群晖等需要先安装或者加载好tun模块才能使用，vnt客户端依赖tun ，[解决群晖 NAS 无法使用 TUN / TAP 的问题 ](https://www.moewah.com/archives/2750.html)
 ```shell
 #检查是否安装了 tun 模块：
 lsmod | grep tun

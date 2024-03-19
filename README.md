@@ -21,6 +21,7 @@ sudo modprobe tun
 #或者
 sudo insmod /lib/modules/tun.ko
 
+#上述方法只测试在我的黑裙DSM7.2里是可以成功运行并且访问组网设备的
 #加载后还是没有可能需要你自行百度一下如何安装tun模块了，每个系统不一样
 ```
 

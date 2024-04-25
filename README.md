@@ -1,4 +1,15 @@
 # 客户端vnt - mipsel
+<p align="center">
+<a href="https://github.com/lmq8267/vnt/releases"><img src="https://img.shields.io/github/downloads/lmq8267/vnt/total">
+<a href="https://github.com/lmq8267/vnt/graphs/contributors"><img src="https://img.shields.io/github/contributors-anon/lmq8267/vnt">
+<a href="https://github.com/lmq8267/vnt/releases/"><img src="https://img.shields.io/github/release/lmq8267/vnt">
+<a href="https://github.com/lmq8267/vnt/issues"><img src="https://img.shields.io/github/issues-raw/lmq8267/vnt">
+<a href="https://github.com/lmq8267/vnt/discussions"><img src="https://img.shields.io/github/discussions/lmq8267/vnt">
+<a href="GitHub repo size"><img src="https://img.shields.io/github/repo-size/lmq8267/vnt?color=red&style=flat-square">
+<a href="https://github.com/lmq8267/vnt/actions?query=workflow%3ABuild"><img src="https://img.shields.io/github/actions/workflow/status/lmq8267/vnt/多版本.yml?branch=main" alt="Build status">
+<a href="https://hub.docker.com/r/lmq8267/vnt"><img src="https://img.shields.io/docker/pulls/lmq8267/vnt?color=%2348BB78&logo=docker&label=pulls" alt="Downloads">
+</p>
+
 服务端 https://github.com/lmq8267/vnts
 
 下载 点右边的releases

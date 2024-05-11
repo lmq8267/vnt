@@ -55,7 +55,7 @@ jobs:
           linker = "/opt/musl_gcc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gcc"
           #rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]  #编译静态选项 默认编译动态版
           EOF
-          git clone https://github.com/lbl8603/vnt  /opt/vnt
+          git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           cd /opt/vnt
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features  --features ip_proxy,port_mapping
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite

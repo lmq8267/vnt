@@ -41,7 +41,7 @@ jobs:
           tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
           sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/
           wget -q -c https://github.com/lmq8267/vnt/releases/download/1.2.1/armada370-gcc493_glibc220_hard-GPL.txz -P /opt/musl_gcc/
-          tar -Jxvf /opt/musl_gcc/armada370-gcc493_glibc220_hard-GPL.txz -C /opt/musl_gcc/
+          tar -Jxf /opt/musl_gcc/armada370-gcc493_glibc220_hard-GPL.txz -C /opt/musl_gcc/
           rustup install 1.72.1
           rustup default 1.72.1
           rustup target add mipsel-unknown-linux-musl

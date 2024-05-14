@@ -31,15 +31,17 @@ jobs:
          #生成随机签名文件keystore.jks
          keytool -genkey -v -keystore keystore.jks -storepass $password -alias key -keypass $password -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=$(openssl rand -hex 4), OU=$(openssl rand -hex 4), O=$(openssl rand -hex 4), L=$(openssl rand -hex 4), ST=$(openssl rand -hex 4), C=$(openssl rand -hex 2)"
          #签名apk
-         jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
-         jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
+         #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
+         #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
+         jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
+         jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
          
          cd /opt
-         zip -r vnt-android.zip /opt/vnt
+         #zip -r vnt-android.zip /opt/vnt
          du -k /opt/vnt/*
       - name : 上传
         uses: actions/upload-artifact@master
         if: always()
         with:
-         name: apk
-         path: /opt/vnt-android.zip
+         name: vnt-apk
+         path: /opt/vnt/*

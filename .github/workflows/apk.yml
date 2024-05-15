@@ -33,9 +33,13 @@ jobs:
          #签名apk
          #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
          #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
-         jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
-         jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
-         
+         #jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-release-signed.apk app-release-unsigned.apk key
+         #jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore keystore.jks -storepass $password -keypass $password -signedjar app-preview-signed.apk app-preview-unsigned.apk key
+         #apksigner sign --ks keystore.jks --ks-key-alias key --ks-pass pass:$password --key-pass pass:$password --out app-preview-signed.apk --in app-preview-unsigned.apk --v1-signing-enabled true --v2-signing-enabled true
+         #启用谷歌v1 v2 v3 v4 签名方式同时签名
+         apksigner sign --ks keystore.jks --ks-key-alias key --ks-pass pass:$password --key-pass pass:$password --out app-release-signed.apk --in app-release-unsigned.apk --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --v4-signing-enabled true
+         apksigner sign --ks keystore.jks --ks-key-alias key --ks-pass pass:$password --key-pass pass:$password --out app-preview-signed.apk --in app-preview-unsigned.apk --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --v4-signing-enabled true
+
          cd /opt
          #zip -r vnt-android.zip /opt/vnt
          du -k /opt/vnt/*

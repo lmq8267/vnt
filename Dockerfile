@@ -16,6 +16,7 @@ RUN echo '#!/bin/sh' > /usr/bin/run.sh && \
     echo '  exec /usr/bin/vn-link-cli "$@"' >> /usr/bin/run.sh && \
     echo 'else' >> /usr/bin/run.sh && \
     echo '  echo "当前运行程序为 vnt-cli 需要特权模式和tun模块。"' >> /usr/bin/run.sh && \
+    echo '  echo "如需运行vn-link-cli或无法使用特权模式和tun的，请在添加容器的时候使用环境变量 APP=vn-link-cli"' >> /usr/bin/run.sh && \
     echo '  exec /usr/bin/vnt-cli "$@"' >> /usr/bin/run.sh && \
     echo 'fi' >> /usr/bin/run.sh
 

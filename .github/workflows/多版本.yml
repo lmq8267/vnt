@@ -57,7 +57,7 @@ jobs:
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           cd /opt/vnt
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features  --features ip_proxy,port_mapping
+          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features  --features ip_proxy
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite
           #cargo clean
           #cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features --features openssl-vendored,aes_ecb,server_encrypt,aes_gcm,ip_proxy,port_mapping
@@ -66,13 +66,13 @@ jobs:
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features default
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_default
           cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored,ring-cipher
+          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored,ring-cipher,wss
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_full
           cargo clean
           #编译群晖ds213j版
           export PATH=$PATH:/opt/musl_gcc/arm-unknown-linux-gnueabi/bin
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/musl_gcc/arm-unknown-linux-gnueabi/lib
-          cargo build --package vnt-cli --target=armv7-unknown-linux-gnueabihf --release --features openssl-vendored
+          cargo build --package vnt-cli --target=armv7-unknown-linux-gnueabihf --release --features openssl-vendored,ring-cipher,wss
           cp -rf /opt/vnt/target/armv7-unknown-linux-gnueabihf/release/vnt-cli /opt/ds213j/vnt-cli_ds213j
       - name: 压缩
         run: |
@@ -109,11 +109,11 @@ jobs:
 
            ### **各版本区别：**
            
-           - **lite**    ：不集成任何加密
-           - **default** ：排除openssl 只使用默认加密 
-           - **full**    ：集成所有加密方式
+           - **lite**    ：不集成任何加密,去掉了所有模块
+           - **default** ：默认配置，没有集成openssl和wss协议 
+           - **full**    ：集成所有模块所有加密方式
 
-           - **ds213j**  ：群晖ds213j的
+           - **ds213j**  ：群晖ds213j的，包含所有模块
            
            如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
            [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/lbl8603/vnt/releases)

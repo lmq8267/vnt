@@ -57,7 +57,7 @@ jobs:
           EOF
           git clone https://github.com/lbl8603/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           cd /opt/vnt
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features --features command
+          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite
           #cargo clean
           #cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features --features openssl-vendored,aes_ecb,server_encrypt,aes_gcm,ip_proxy,port_mapping

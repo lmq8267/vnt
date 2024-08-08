@@ -57,6 +57,9 @@ jobs:
           EOF
           git clone https://github.com/vnt-dev/vnt -b ${{ needs.check.outputs.ver }} /opt/vnt
           cd /opt/vnt
+          #修改为中文
+          sed -i 's|en.to_string|zh.to_string|g' ./common/src/cli.rs
+          sed -i 's|en-US|zh|g' ./common/src/cli.rs
           cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite
           #cargo clean

@@ -77,23 +77,19 @@ jobs:
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/musl_gcc/arm-unknown-linux-gnueabi/lib
           cargo build --package vnt-cli --target=armv7-unknown-linux-gnueabihf --release --features openssl-vendored,ring-cipher,wss
           cp -rf /opt/vnt/target/armv7-unknown-linux-gnueabihf/release/vnt-cli /opt/ds213j/vnt-cli_ds213j
+      - name: 安装 UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          version: latest
+          install-only: true
       - name: 压缩
         run: |
-          git clone https://github.com/lmq8267/cloudflared.git /opt/st
-          tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
-          chmod 777 /opt/upx-3.95-amd64_linux/upx
-          chmod 777 /opt/st/strip
           cd /opt/mipsel
           du -ha
-          /opt/st/strip /opt/mipsel/vnt-cli_lite
-          #/opt/st/strip /opt/mipsel/vnt-cli_openssl
-          /opt/st/strip /opt/mipsel/vnt-cli_default
-          /opt/st/strip /opt/mipsel/vnt-cli_full
-          du -ha
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_lite
-          #/opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_openssl
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_default
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_full
+          upx --lzma --best /opt/mipsel/vnt-cli_lite
+          #upx --lzma --best /opt/mipsel/vnt-cli_openssl
+          upx --lzma --best /opt/mipsel/vnt-cli_default
+          upx --lzma --best /opt/mipsel/vnt-cli_full
           du -ha
           #echo $(md5sum /opt/mipsel/vnt-cli_${NAME} | awk '{print $1;}') >${NAME}_MD5.txt
           echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
@@ -132,4 +128,15 @@ jobs:
        with:
         token: ${{ secrets.c8 }}
         retain_days: 2
-        keep_minimum_runs: 0
+        keep_minimum_runs: 1
+ keepalive-workflow:
+    # github超过60天未提交将自动停止工作流
+    name: 工作流保活 
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
+        #with:
+          #use_api: true

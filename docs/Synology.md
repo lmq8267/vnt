@@ -102,7 +102,13 @@ services:
 ![](./img/群晖添加第三方套件源.png)
 ![](./img/群晖搜索套件.png)
 ![](./img/群晖套件权限.png)
+`sudo sed -i 's/package/root/g' /var/packages/RustVNT/conf/privilege`
 #### 这里建议使用第一个方法，每次开机自动赋予权限
-
+![](./img/群晖套件修改配置.png)
+#### [配置文件模板](https://github.com/vnt-dev/vnt/blob/main/vnt-cli/README.md#-f-conf)参考，
+![](./img/群晖套件停用再启动.png)
+#### 可以打开ssh输入命令来查看启动状态，
+![](./img/群晖套件查看启动状态.png)
+#### 如上表示启动成功，日志路径在`/var/packages/RustVNT/var/RustVNT.log` 配置文件路径在`/var/packages/RustVNT/var/config.yaml` 至此套件部署完成~
 
 ### 3.ssh二进制运行

@@ -14,10 +14,10 @@
 
 # 群晖 Synology 篇 （以DSM 7.2 为例）
 
-## [部署vnt-cli客户端](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#%E4%B8%80%E5%89%8D%E6%8F%90%E9%9C%80%E8%A6%81%E5%85%88%E7%A1%AE%E5%AE%9A%E5%B7%B2%E5%8A%A0%E8%BD%BD%E5%A5%BDtun%E6%A8%A1%E5%9D%97%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89tun%E6%A8%A1%E5%9D%97%E7%9A%84%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8vn-link-cli)：
-1.[Docker部署](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#1docker%E8%BF%90%E8%A1%8C%E6%9C%89tun%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F)<br>
-2.[第三方套件运行](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%A5%97%E4%BB%B6%E8%BF%90%E8%A1%8C)<br>
-3.[ssh二进制运行](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#ssh%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BF%90%E8%A1%8C)
+## [部署vnt-cli客户端](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#%E4%B8%80%E5%89%8D%E6%8F%90%E9%9C%80%E8%A6%81%E5%85%88%E7%A1%AE%E5%AE%9A%E5%B7%B2%E5%8A%A0%E8%BD%BD%E5%A5%BDtun%E6%A8%A1%E5%9D%97%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89tun%E6%A8%A1%E5%9D%97%E7%9A%84%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8vn-link-cli)：
+1.[Docker部署](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#1docker%E8%BF%90%E8%A1%8C%E6%9C%89tun%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F)<br>
+2.[第三方套件运行](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#2%E7%AC%AC%E4%B8%89%E6%96%B9%E5%A5%97%E4%BB%B6%E8%BF%90%E8%A1%8C)<br>
+3.[ssh二进制运行](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#3ssh%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BF%90%E8%A1%8C)
 ## [部署vnts服务端]()：
 
 <br>
@@ -112,3 +112,16 @@ services:
 #### 如上表示启动成功，日志路径在`/var/packages/RustVNT/var/RustVNT.log` 配置文件路径在`/var/packages/RustVNT/var/config.yaml` 至此套件部署完成~
 
 ### 3.ssh二进制运行
+#### ①[检测是否有tun](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#%E4%B8%80%E5%89%8D%E6%8F%90%E9%9C%80%E8%A6%81%E5%85%88%E7%A1%AE%E5%AE%9A%E5%B7%B2%E5%8A%A0%E8%BD%BD%E5%A5%BDtun%E6%A8%A1%E5%9D%97%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89tun%E6%A8%A1%E5%9D%97%E7%9A%84%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8vn-link-cli)
+#### ②启用群晖的ssh功能，前往[vnt项目](https://github.com/vnt-dev/vnt/releases)项目地址下载适合自己平台架构的程序，注意群晖是linux系统，
+![](./img/群晖ssh下载程序.png)
+#### ③解压出vnt-cli二进制程序，上传到群晖的目录里，我上传到`/volume1/8267/bin/vnt/vnt-cli`
+![](./img/群晖ssh上传二进制.png)
+#### ④打开ssh终端输入启动命令测试
+![](./img/群晖ssh命令行启动.png)
+#### ⑤启动成功那么需要设置开机自动启动，我设置每五分钟检测一次进程，不存在则启动，
+![](./img/群晖ssh定时任务新增.png)
+![](./img/群晖ssh定时任务新增2.png)
+![](./img/群晖ssh定时任务新增3.png)
+![](./img/群晖ssh定时任务新增4.png)
+#### 至此ssh运行二进制部署完成

@@ -14,9 +14,9 @@
 # 使用教程：
 
 ## 一、[群晖 Synology 篇](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md)：
-#### [部署vnt-cli客户端](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#%E4%B8%80%E5%89%8D%E6%8F%90%E9%9C%80%E8%A6%81%E5%85%88%E7%A1%AE%E5%AE%9A%E5%B7%B2%E5%8A%A0%E8%BD%BD%E5%A5%BDtun%E6%A8%A1%E5%9D%97%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89tun%E6%A8%A1%E5%9D%97%E7%9A%84%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8vn-link-cli)：
-1.[Docker部署](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#1docker%E8%BF%90%E8%A1%8C%E6%9C%89tun%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F)<br>
-2.[第三方套件运行](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%A5%97%E4%BB%B6%E8%BF%90%E8%A1%8C)<br>
-3.[ssh二进制运行](https://github.com/lmq8267/vnt/edit/main/docs/Synology.md#ssh%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BF%90%E8%A1%8C)
+#### [部署vnt-cli客户端](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#%E4%B8%80%E5%89%8D%E6%8F%90%E9%9C%80%E8%A6%81%E5%85%88%E7%A1%AE%E5%AE%9A%E5%B7%B2%E5%8A%A0%E8%BD%BD%E5%A5%BDtun%E6%A8%A1%E5%9D%97%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89tun%E6%A8%A1%E5%9D%97%E7%9A%84%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8vn-link-cli)：
+1.[Docker部署](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#1docker%E8%BF%90%E8%A1%8C%E6%9C%89tun%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F)<br>
+2.[第三方套件运行](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#2%E7%AC%AC%E4%B8%89%E6%96%B9%E5%A5%97%E4%BB%B6%E8%BF%90%E8%A1%8C)<br>
+3.[ssh二进制运行](https://github.com/lmq8267/vnt/blob/main/docs/Synology.md#3ssh%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BF%90%E8%A1%8C)
 #### [部署vnts服务端]()：
 

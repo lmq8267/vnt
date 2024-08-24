@@ -26,6 +26,6 @@
 
 ## 三、[Linux ](https://github.com/lmq8267/vnt/blob/main/docs/Linux.md)：
 
-## 四、[移动（安卓 IOS） ](https://github.com/lmq8267/vnt/blob/main/docs/Mobile.md)：
+## 四、[手机（安卓 IOS） ](https://github.com/lmq8267/vnt/blob/main/docs/Mobile.md)：
 
 ## 五、[路由器 ](https://github.com/lmq8267/vnt/blob/main/docs/Router.md)：

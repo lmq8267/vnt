@@ -60,7 +60,7 @@ check () {
 vnt () {
    echo "" >/tmp/vnt_update
    check
-   ver="$($vnt_cli -h | grep version | awk -F ':' {'print $2'})"
+   ver="v$($vnt_cli -h | grep version | awk -F ':' {'print $2'})"
    log "开始更新vnt-cli客户端程序..." vnt
    if [ -z "$1" ] ; then
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then

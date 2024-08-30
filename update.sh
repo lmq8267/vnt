@@ -1,19 +1,7 @@
 #!/bin/sh
 
-vnt_cli=`uci -q get vnt.@vnt-cli[0].clibin`
-vnts=`uci -q get vnt.@vnts[0].vntsbin`
 curltest=`which curl`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
-[ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm" 
-[ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7" 
-[ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64" 
-[ -n "$(echo $cputype | grep -E "linux.*86.*")" ] && cpucore="i386" 
-[ -n "$(echo $cputype | grep -E "linux.*86_64.*")" ] && cpucore="x86_64" 
-if [ -n "$(echo $cputype | grep -E "linux.*mips.*")" ] ; then
-    mipstype=$(echo -n I | hexdump -o 2>/dev/null | awk '{ print substr($2,6,1); exit}') 
-    [ "$mipstype" = "0" ] && cpucore="mips" || cpucore="mipsle" 
-fi
 proxys="
 https://github.moeyy.xyz/
 https://gh.ddlc.top/
@@ -25,13 +13,47 @@ https://dl.cnqq.cloudns.ch/
 
 log () {
    echo -e "\033[36;1m【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : \033[0m\033[35;1m$1 \033[0m"
-   echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : $1 " >>/tmp/vnt_update
+  echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : $1 " >>/tmp/vnt_update
 }
 
 check () {
+   vnt_cli=`uci -q get vnt.@vnt-cli[0].clibin`
+   vnts=`uci -q get vnt.@vnts[0].vntsbin`
+   size=$(df -k /usr/bin | awk 'NR==2 {print $(NF-2) }')
+      size_m=$(df -m /usr/bin | awk 'NR==2 {print $(NF-2) }')
    if [ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] ; then
       echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" 
       exit 0
+   fi
+   if [ -z "$vnt_cli" ] ; then
+      if [ "$size" -gt 4000 ] ; then
+        vnt_cli="/usr/bin/vnt-cli"
+        uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
+      else
+                log "当前内部可用空间剩余${size_m}M 不足以存储vnt-cli程序，已更改到内存/tmp/vnt-cli" vnt
+                vnt_cli="/tmp/vnt-cli"
+                uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
+            fi
+   fi
+   if [ -z "$vnts" ] ; then
+      if [ "$size" -gt 4000 ] ; then
+         vnts="/usr/bin/vnts"
+         uci -q set vnt.@vnts[0].vntsbin="$vnts"
+      else
+         log "当前内部可用空间剩余${size_m}M 不足以存储vnts程序，已更改到内存/tmp/vnts" vnts
+         vnts="/tmp/vnts"
+         uci -q set vnt.@vnts[0].vntsbin="$vnts"
+      fi
+   fi
+   cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
+   [ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm" 
+   [ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && [ ! -d /jffs/clash ] && cpucore="armv7" 
+   [ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64" 
+   [ -n "$(echo $cputype | grep -E "linux.*86.*")" ] && cpucore="i386" 
+   [ -n "$(echo $cputype | grep -E "linux.*86_64.*")" ] && cpucore="x86_64" 
+   if [ -n "$(echo $cputype | grep -E "linux.*mips.*")" ] ; then
+      mipstype=$(echo -n I | hexdump -o 2>/dev/null | awk '{ print substr($2,6,1); exit}') 
+      [ "$mipstype" = "0" ] && cpucore="mips" || cpucore="mipsle" 
    fi
 }
 

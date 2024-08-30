@@ -20,7 +20,7 @@ check () {
    vnt_cli=`uci -q get vnt.@vnt-cli[0].clibin`
    vnts=`uci -q get vnt.@vnts[0].vntsbin`
    size=$(df -k /usr/bin | awk 'NR==2 {print $(NF-2) }')
-      size_m=$(df -m /usr/bin | awk 'NR==2 {print $(NF-2) }')
+   size_m=$(df -m /usr/bin | awk 'NR==2 {print $(NF-2) }')
    if [ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] ; then
       echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" 
       exit 0
@@ -30,13 +30,13 @@ check () {
         vnt_cli="/usr/bin/vnt-cli"
         uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
       else
-                log "当前内部可用空间剩余${size_m}M 不足以存储vnt-cli程序，已更改到内存/tmp/vnt-cli" vnt
-                vnt_cli="/tmp/vnt-cli"
-                uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
-            fi
+        log "当前内部可用空间剩余${size_m}M 不足以存储vnt-cli程序，已更改到内存/tmp/vnt-cli" vnt
+        vnt_cli="/tmp/vnt-cli"
+        uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
+      fi
    fi
    if [ -z "$vnts" ] ; then
-      if [ "$size" -gt 4000 ] ; then
+      if [ "$size" -gt 9500 ] ; then
          vnts="/usr/bin/vnts"
          uci -q set vnt.@vnts[0].vntsbin="$vnts"
       else

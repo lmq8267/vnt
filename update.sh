@@ -134,7 +134,7 @@ exit 0
 vnts () {
    echo "" >/tmp/vnt_update
    check
-    ver="$($vnts -V | awk '{print $2}')"
+    ver="v$($vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
    log "开始更新vnts服务端程序..." vnts
    if [ -z "$1" ] ; then
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then

@@ -37,7 +37,10 @@ log () {
 }
 
 check () {
-   [ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] && echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" ; exit 0
+   if [ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] ; then
+      echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" 
+      exit 0
+   fi
 }
 
 vnt () {

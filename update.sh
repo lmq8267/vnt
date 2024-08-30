@@ -218,6 +218,8 @@ luci () {
 	    fi
          fi
       done
+   else
+      log "当前版本 ${ver} 已是最新版本，无需更新！" luci && exit 0
    fi
 exit 0
 }

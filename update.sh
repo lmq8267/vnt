@@ -22,6 +22,8 @@ https://mirror.ghproxy.com/
 https://ghproxy.net/
 https://dl.cnqq.cloudns.ch/
 "
+[ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] && echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" ; exit 0
+
 log () {
    echo -e "\033[36;1m【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : \033[0m\033[35;1m$1 \033[0m"
    if [ "$2" = "vnt" ] ; then

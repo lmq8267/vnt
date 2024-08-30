@@ -60,7 +60,7 @@ check () {
 vnt () {
    echo "" >/tmp/vnt_update
    check
-   ver="v$($vnt_cli -h | grep version | awk -F ':' {'print $2'})"
+   ver="$($vnt_cli -h | grep version | awk -F ':' {'print $2'})"
    log "开始更新vnt-cli客户端程序..." vnt
    if [ -z "$1" ] ; then
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
@@ -78,7 +78,7 @@ vnt () {
    [ -z "$tag" ] &&  log "无法从github获取到最新版本，退出更新！" vnt && exit 0
    if [ ! -z "$cpucore" ] ; then
        if [ ! -z "$ver" ] && [ ! -z "$tag" ] ; then
-           if [ "$ver"x = "$tag"x ] ; then
+           if [ "$ver"x = "$(echo $tag | tr -d 'v \n')"x ] ; then
                log "当前版本 ${ver} 已是最新版本，无需更新！" vnt && exit 0
 	   else
 	       log "当前版本 ${ver} 最新版本 ${tag} " vnt
@@ -134,7 +134,7 @@ exit 0
 vnts () {
    echo "" >/tmp/vnt_update
    check
-    ver="v$($vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
+    ver="$($vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
    log "开始更新vnts服务端程序..." vnts
    if [ -z "$1" ] ; then
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
@@ -152,7 +152,7 @@ vnts () {
    [ -z "$tag" ] &&  log "无法从github获取到最新版本，退出更新！" vnts && exit 0
    if [ ! -z "$cpucore" ] ; then
        if [ ! -z "$ver" ] && [ ! -z "$tag" ] ; then
-           if [ "$ver"x = "$tag"x ] ; then
+           if [ "$ver"x = "$(echo $tag | tr -d 'v \n')"x ] ; then
                log "当前版本 ${ver} 已是最新版本，无需更新！" vnts && exit 0
 	   else
 	       log "当前版本 ${ver} 最新版本 ${tag} " vnts

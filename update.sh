@@ -110,6 +110,7 @@ vnt () {
         fi
     fi
    done
+   rm -rf /tmp/vnt*.tag /tmp/vnt*.newtag
 exit 0
 }
 
@@ -183,6 +184,7 @@ vnts () {
         fi
     fi
    done
+   rm -rf /tmp/vnt*.tag /tmp/vnt*.newtag
 exit 0
 }
 

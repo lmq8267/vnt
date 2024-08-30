@@ -128,7 +128,6 @@ vnts () {
        [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 5 --user-agent "$user_agent" -s  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    fi
-   fi
    else
    tag="$1"
    fi

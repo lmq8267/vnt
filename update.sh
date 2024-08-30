@@ -49,9 +49,11 @@ vnt () {
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
        tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    else
        tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 5 --user-agent "$user_agent" -s  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/vnt-dev/vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    fi
    else
    tag="$1"
@@ -120,9 +122,12 @@ vnts () {
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
        tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    else
        tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 5 --user-agent "$user_agent" -s  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/vnt-dev/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   fi
    fi
    else
    tag="$1"
@@ -191,9 +196,11 @@ luci () {
    if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
        tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    else
        tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       [ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 5 --user-agent "$user_agent" -s  https://dl.cnqq.cloudns.ch/https://api.github.com/repos/lmq8267/luci-app-vnt/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    fi
    else
    tag="$1"

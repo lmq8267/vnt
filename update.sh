@@ -6,7 +6,7 @@ curltest=`which curl`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
 [ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm" 
-[ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && [ ! -d /jffs/clash ] && cpucore="armv7" 
+[ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7" 
 [ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64" 
 [ -n "$(echo $cputype | grep -E "linux.*86.*")" ] && cpucore="i386" 
 [ -n "$(echo $cputype | grep -E "linux.*86_64.*")" ] && cpucore="x86_64" 
@@ -25,15 +25,7 @@ https://dl.cnqq.cloudns.ch/
 
 log () {
    echo -e "\033[36;1m【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : \033[0m\033[35;1m$1 \033[0m"
-   if [ "$2" = "vnt" ] ; then
-   echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X) 】: $1 " >>/tmp/vnt-cli_update
-   fi
-   if [ "$2" = "vnts" ] ; then
-   echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : $1 " >>/tmp/vnts_update
-   fi
-   if [ "$2" = "luci" ] ; then
-   echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : $1 " >>/tmp/vnt_luci
-   fi
+   echo "【$(TZ=UTC-8 date -R +%Y年%m月%d月\ %X)】 : $1 " >>/tmp/vnt_update
 }
 
 check () {
@@ -44,7 +36,7 @@ check () {
 }
 
 vnt () {
-   echo "" >/tmp/vnt-cli_update
+   echo "" >/tmp/vnt_update
    check
    ver="$($vnt_cli -h | grep version | awk -F ':' {'print $2'})"
    log "开始更新vnt-cli客户端程序..." vnt
@@ -118,7 +110,7 @@ exit 0
 }
 
 vnts () {
-   echo "" >/tmp/vnts_update
+   echo "" >/tmp/vnt_update
    check
     ver="$($vnts -V | awk '{print $2}')"
    log "开始更新vnts服务端程序..." vnts
@@ -192,7 +184,7 @@ exit 0
 }
 
 luci () {
-   echo "" >/tmp/vnt_luci
+   echo "" >/tmp/vnt_update
    ver="$(opkg info luci-app-vnt | awk '/Version:/ {print $2}')"
    [ -z "$ver" ] &&  log "无法获取本设备的luci-app-vnt版本号，退出更新！" luci && exit 0
    log "开始更新luci-app-vnt ..." luci

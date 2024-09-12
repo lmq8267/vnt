@@ -6,6 +6,10 @@ ARG TARGETVARIANT
 ADD vnt-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vnt-cli
 ADD vn-link-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vn-link-cli
 
+# 设置中文环境变量
+ENV LANG=zh_CN.UTF-8 
+ENV LANGUAGE=zh_CN:zh
+
 # 设置程序为可执行
 RUN chmod +x /usr/bin/vnt-cli /usr/bin/vn-link-cli
 

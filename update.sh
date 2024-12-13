@@ -2,13 +2,10 @@
 
 curltest=`which curl`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-proxys="
-https://github.moeyy.xyz/
-https://gh.ddlc.top/
+proxys="https://github.moeyy.xyz/
 https://gh.llkk.cc/
 https://mirror.ghproxy.com/
 https://ghproxy.net/
-https://dl.cnqq.cloudns.ch/
 "
 
 log () {
@@ -20,7 +17,7 @@ check () {
    vnt_cli=`uci -q get vnt.@vnt-cli[0].clibin`
    vnts=`uci -q get vnt.@vnts[0].vntsbin`
    size=$(df -k /usr/bin | awk 'NR==2 {print $(NF-2) }')
-   size_m=$(df -m /usr/bin | awk 'NR==2 {print $(NF-2) }')
+      size_m=$(df -m /usr/bin | awk 'NR==2 {print $(NF-2) }')
    if [ ! -f /usr/lib/lua/luci/model/cbi/vnt.lua ] ; then
       echo -e "\033[31m此脚本只适合更新已安装luci-app-vnt的程序！ \033[0m" 
       exit 0
@@ -30,10 +27,10 @@ check () {
         vnt_cli="/usr/bin/vnt-cli"
         uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
       else
-        log "当前内部可用空间剩余${size_m}M 不足以存储vnt-cli程序，已更改到内存/tmp/vnt-cli" vnt
-        vnt_cli="/tmp/vnt-cli"
-        uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
-      fi
+                log "当前内部可用空间剩余${size_m}M 不足以存储vnt-cli程序，已更改到内存/tmp/vnt-cli" vnt
+                vnt_cli="/tmp/vnt-cli"
+                uci -q set vnt.@vnt-cli[0].clibin="$vnt_cli"
+            fi
    fi
    if [ -z "$vnts" ] ; then
       if [ "$size" -gt 9500 ] ; then
@@ -47,7 +44,7 @@ check () {
    fi
    cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
    [ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm" 
-   [ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && [ ! -d /jffs/clash ] && cpucore="armv7" 
+   [ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7" 
    [ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64" 
    [ -n "$(echo $cputype | grep -E "linux.*86.*")" ] && cpucore="i386" 
    [ -n "$(echo $cputype | grep -E "linux.*86_64.*")" ] && cpucore="x86_64" 
@@ -86,7 +83,7 @@ vnt () {
        fi
        log "当前CPU架构 ${cpucore} 获取到最新版本vnt-${cpucore}-unknown-linux-musl-${tag}.tar.gz" vnt
        case "${cpucore}" in 
-             "mipsle") url="mipsle-unknown-linux-musl"
+             "mipsle") url="mipsel-unknown-linux-musl"
 	     ;;
 	     "mips") url="mips-unknown-linux-musl"
 	     ;;
@@ -112,9 +109,12 @@ vnt () {
 	rm /tmp/vnt-cli >/dev/null 2>&1
         tar -zxf /tmp/vnt-cli.tar.gz -C /tmp/
 	rm /tmp/vnt-cli.tar.gz /tmp/vn-link-cli /tmp/README.md >/dev/null 2>&1
-	chmod +x /tmp/vnt-cli
+        if [ ! -f /tmp/vnt-cli ]; then
+          log "下载文件不完整或解压失败" vnt
+        else
+	chmod +x /tmp/vnt-cli 
 	dlmd5=$(md5sum /tmp/vnt-cli | awk '{print $1}')
-	if [ $(($(/tmp/vnt-cli -h | wc -l))) -gt 3 ] ; then
+	if [ "$(($(/tmp/vnt-cli -h 2>&1 | wc -l)))" -gt 3 ] ; then
 	    log "解压完成，替换/tmp/vnt-cli 到${vnt_cli}" vnt 
 	    #/etc/init.d/vnt stop 
 	    mv -f /tmp/vnt-cli ${vnt_cli}
@@ -125,6 +125,7 @@ vnt () {
                 break
 	    fi
         fi
+       fi
     fi
    done
    rm -rf /tmp/vnt*.tag /tmp/vnt*.newtag >/dev/null 2>&1
@@ -160,7 +161,7 @@ vnts () {
        fi
        log "当前CPU架构 ${cpucore} 获取到最新版本vnts-${cpucore}-unknown-linux-musl-${tag}.tar.gz" vnts
        case "${cpucore}" in 
-             "mipsle") url="mipsle-unknown-linux-musl"
+             "mipsle") url="mipsel-unknown-linux-musl"
 	     ;;
 	     "mips") url="mips-unknown-linux-musl"
 	     ;;
@@ -184,11 +185,14 @@ vnts () {
     if [ "$?" = 0 ] ; then
         log "下载完成，开始解压/tmp/vnts.tar.gz到/tmp/目录里..." vnts 
 	rm /tmp/vnts >/dev/null 2>&1
-        tar -zxf /tmp/vnts.tar.gz -C /tmp/
+        tar -zxf /tmp/vnts.tar.gz -C /tmp/ 
 	rm /tmp/vnts.tar.gz >/dev/null 2>&1
+	if [ ! -f /tmp/vnts ]; then
+          log "下载文件不完整或解压失败" vnts
+	 else
 	chmod +x /tmp/vnts
 	dlmd5=$(md5sum /tmp/vnts | awk '{print $1}')
-	if [ $(($(/tmp/vnts -h | wc -l))) -gt 3 ] ; then
+	if [ "$(($(/tmp/vnts -h 2>&1 | wc -l)))" -gt 3 ] ; then
 	    log "解压完成，替换/tmp/vnts 到${vnts}" vnts 
 	    #/etc/init.d/vnt stop 
 	    mv -f /tmp/vnts ${vnts}
@@ -199,6 +203,7 @@ vnts () {
                 break
 	    fi
         fi
+	fi
     fi
    done
    rm -rf /tmp/vnt*.tag /tmp/vnt*.newtag >/dev/null 2>&1

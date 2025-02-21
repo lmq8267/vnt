@@ -20,19 +20,30 @@ jobs:
           mkdir -p /opt/mipsel
           mkdir -p /opt/ds213j
           sudo timedatectl set-timezone "Asia/Shanghai"
-          wget -c https://musl.cc/mipsel-linux-musl-cross.tgz -P ./musl_gcc/
-          tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
-          sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/
+          wget -c https://musl.cc/mipsel-linux-muslsf-cross.tgz -P /opt/musl_gcc/
+          tar zxf /opt/musl_gcc/mipsel-linux-muslsf-cross.tgz -C /opt/musl_gcc/
+          sudo ln -s /opt/musl_gcc/mipsel-linux-muslsf-cross/bin/*gcc /usr/bin/
           wget -c https://github.com/lmq8267/vnt/releases/download/1.2.1/armada370-gcc493_glibc220_hard-GPL.txz -P /opt/musl_gcc/
           tar -Jxvf /opt/musl_gcc/armada370-gcc493_glibc220_hard-GPL.txz -C /opt/musl_gcc/
-          rustup install 1.72.1
-          rustup default 1.72.1
-          rustup target add mipsel-unknown-linux-musl
+          #rustup install 1.72.1
+          #rustup default 1.72.1
+          cd /opt/musl_gcc/mipsel-linux-muslsf-cross/lib/gcc/mipsel-linux-muslsf/11.2.1
+          cp libgcc_eh.a libunwind.a
+          rustup toolchain install nightly-x86_64-unknown-linux-gnu
+          rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+          RUST_LIB_SRC=$HOME/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/
+          if [[ -f $RUST_LIB_SRC/library/Cargo.lock && ! -f $RUST_LIB_SRC/Cargo.lock ]]; then 
+              cp -f $RUST_LIB_SRC/library/Cargo.lock $RUST_LIB_SRC/Cargo.lock
+          fi
+          #rustup target add mipsel-unknown-linux-musl
           rustup target add armv7-unknown-linux-gnueabihf
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
-          linker = "mipsel-linux-musl-gcc"
-          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]
+          linker = "mipsel-linux-muslsf-gcc"
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","-C", "link-arg=-static",
+          "-C", "relocation-model=static","-C", "link-arg=-no-pie","--cfg", "compiler_builtins_no_debug",
+          "-L", "/opt/musl_gcc/mipsel-linux-muslsf-cross/mipsel-linux-muslsf/lib",
+          "-L", "/opt/musl_gcc/mipsel-linux-muslsf-cross/lib/gcc/mipsel-linux-muslsf/11.2.1"]
 
           [target.armv7-unknown-linux-gnueabihf]
           linker = "arm-unknown-linux-gnueabi-gcc"
@@ -42,16 +53,16 @@ jobs:
           cd /opt/vnt
           echo "tag=$(grep -o 'version = "[^"]*' ./common/Cargo.toml | sed 's/version = "//')" >> $GITHUB_ENV
           sed -i 's|0.9.25|0.8.26|g' ./vnt-cli/Cargo.toml
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --no-default-features 
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite
           cargo clean
           #cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features --features openssl-vendored,aes_ecb,server_encrypt,aes_gcm
           #cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_openssl
           #cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features default
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --features default
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_default
           cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored,ring-cipher
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --features openssl-vendored,ring-cipher,wss
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_full
           cargo clean
           #编译群晖ds213j版
@@ -59,12 +70,13 @@ jobs:
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/musl_gcc/arm-unknown-linux-gnueabi/lib
           cargo build --package vnt-cli --target=armv7-unknown-linux-gnueabihf --release --features openssl-vendored
           cp -rf /opt/vnt/target/armv7-unknown-linux-gnueabihf/release/vnt-cli /opt/ds213j/vnt-cli_ds213j
+      - name: 安装 UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          version: latest
+          install-only: true
       - name: 压缩
         run: |
-          git clone https://github.com/lmq8267/cloudflared.git /opt/st
-          tar -xvf /opt/st/upx-3.95-amd64_linux.tar.xz -C /opt
-          chmod 777 /opt/upx-3.95-amd64_linux/upx
-          chmod 777 /opt/st/strip
           cd /opt/mipsel
           du -ha
           /opt/st/strip /opt/mipsel/vnt-cli_lite
@@ -72,10 +84,10 @@ jobs:
           /opt/st/strip /opt/mipsel/vnt-cli_default
           /opt/st/strip /opt/mipsel/vnt-cli_full
           du -ha
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_lite
-          #/opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_openssl
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_default
-          /opt/upx-3.95-amd64_linux/upx --lzma --best /opt/mipsel/vnt-cli_full
+          upx --lzma --best /opt/mipsel/vnt-cli_lite
+          #upx --lzma --best /opt/mipsel/vnt-cli_openssl
+          upx --lzma --best /opt/mipsel/vnt-cli_default
+          upx --lzma --best /opt/mipsel/vnt-cli_full
           du -ha
           #echo $(md5sum /opt/mipsel/vnt-cli_${NAME} | awk '{print $1;}') >${NAME}_MD5.txt
           echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
@@ -101,7 +113,7 @@ jobs:
            - **ds213j**  ：群晖ds213j的
            
            如果不加密（参数-w），集不集成加密模块都不影响使用，若加密则所有客户端都应使用相同的加密方式
-           [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/lbl8603/vnt/releases)
+           [详细加密方式介绍](https://github.com/lbl8603/vnt#%E7%BC%96%E8%AF%91)、[官方更新说明](https://github.com/vnt-dev/vnt/releases)
 
            [其他平台压缩版](https://github.com/lmq8267/vnt-cli/releases)
           tag_name: ${{ env.tag }}

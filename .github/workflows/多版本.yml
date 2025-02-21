@@ -33,23 +33,34 @@ jobs:
         uses: snickerbockers/submodules-init@v4
       - name: 配置并编译
         run: |
-          mkdir -p ./musl_gcc 
+          mkdir -p /opt/musl_gcc 
           mkdir -p /opt/mipsel
           mkdir -p /opt/ds213j
           sudo timedatectl set-timezone "Asia/Shanghai"
-          wget -q -c https://musl.cc/mipsel-linux-musl-cross.tgz -P ./musl_gcc/
-          tar zxf ./musl_gcc/mipsel-linux-musl-cross.tgz -C ./musl_gcc/
-          sudo ln -s $(pwd)/musl_gcc/mipsel-linux-musl-cross/bin/*gcc /usr/bin/
+          wget -q -c https://musl.cc/mipsel-linux-muslsf-cross.tgz -P /opt/musl_gcc/
+          tar zxf /opt/musl_gcc/mipsel-linux-muslsf-cross.tgz -C /opt/musl_gcc/
+          sudo ln -s /opt/musl_gcc/mipsel-linux-muslsf-cross/bin/*gcc /usr/bin/
           wget -q -c https://github.com/lmq8267/vnt/releases/download/1.2.1/armada370-gcc493_glibc220_hard-GPL.txz -P /opt/musl_gcc/
           tar -Jxf /opt/musl_gcc/armada370-gcc493_glibc220_hard-GPL.txz -C /opt/musl_gcc/
-          rustup install 1.72.1
-          rustup default 1.72.1
-          rustup target add mipsel-unknown-linux-musl
+          #rustup install 1.72.1
+          #rustup default 1.72.1
+          cd /opt/musl_gcc/mipsel-linux-muslsf-cross/lib/gcc/mipsel-linux-muslsf/11.2.1
+          cp libgcc_eh.a libunwind.a
+          rustup toolchain install nightly-x86_64-unknown-linux-gnu
+          rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+          RUST_LIB_SRC=$HOME/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/
+          if [[ -f $RUST_LIB_SRC/library/Cargo.lock && ! -f $RUST_LIB_SRC/Cargo.lock ]]; then 
+              cp -f $RUST_LIB_SRC/library/Cargo.lock $RUST_LIB_SRC/Cargo.lock
+          fi
+          #rustup target add mipsel-unknown-linux-musl
           rustup target add armv7-unknown-linux-gnueabihf
           cat >>~/.cargo/config <<EOF
           [target.mipsel-unknown-linux-musl]
           linker = "mipsel-linux-musl-gcc"
-          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols"]
+          rustflags = ["-C", "target-feature=+crt-static","-C", "strip=symbols","-C", "link-arg=-static",
+          "-C", "relocation-model=static","-C", "link-arg=-no-pie","--cfg", "compiler_builtins_no_debug",
+          "-L", "/opt/musl_gcc/mipsel-linux-muslsf-cross/mipsel-linux-muslsf/lib",
+          "-L", "/opt/musl_gcc/mipsel-linux-muslsf-cross/lib/gcc/mipsel-linux-muslsf/11.2.1"]
 
           [target.armv7-unknown-linux-gnueabihf]
           linker = "/opt/musl_gcc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gcc"
@@ -60,16 +71,16 @@ jobs:
           #修改为中文
           sed -i 's|en.to_string|zh.to_string|g' ./common/src/cli.rs
           sed -i 's|en-US|zh|g' ./common/src/cli.rs
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --no-default-features 
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_lite
           #cargo clean
           #cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --no-default-features --features openssl-vendored,aes_ecb,server_encrypt,aes_gcm,ip_proxy,port_mapping
           #cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_openssl
           cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features default
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --features default
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_default
           cargo clean
-          cargo build --package vnt-cli --release --target=mipsel-unknown-linux-musl --features openssl-vendored,ring-cipher,wss
+          cargo +nightly build --package vnt-cli --release --target mipsel-unknown-linux-musl -Z build-std=std,panic_abort --features openssl-vendored,ring-cipher,wss
           cp -rf /opt/vnt/target/mipsel-unknown-linux-musl/release/vnt-cli /opt/mipsel/vnt-cli_full
           cargo clean
           #编译群晖ds213j版

@@ -20,7 +20,7 @@ jobs:
           mkdir -p /opt/mipsel
           mkdir -p /opt/ds213j
           sudo timedatectl set-timezone "Asia/Shanghai"
-          wget -c https://musl.cc/mipsel-linux-muslsf-cross.tgz -P /opt/musl_gcc/
+          wget -c https://github.com/lmq8267/Toolchain/releases/download/musl-cross/mipsel-linux-muslsf-cross.tgz -P /opt/musl_gcc/
           tar zxf /opt/musl_gcc/mipsel-linux-muslsf-cross.tgz -C /opt/musl_gcc/
           sudo ln -s /opt/musl_gcc/mipsel-linux-muslsf-cross/bin/*gcc /usr/bin/
           wget -c https://github.com/lmq8267/vnt/releases/download/1.2.1/armada370-gcc493_glibc220_hard-GPL.txz -P /opt/musl_gcc/

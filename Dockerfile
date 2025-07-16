@@ -5,6 +5,7 @@ ARG TARGETVARIANT
 # 添加程序
 ADD vnt-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vnt-cli
 ADD vn-link-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vn-link-cli
+RUN apk update && apk add iptables
 
 # 设置中文环境变量
 ENV LANG=zh_CN.UTF-8 

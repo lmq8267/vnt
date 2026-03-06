@@ -6,7 +6,7 @@ ARG TARGETVARIANT
 ADD vnt-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vnt-cli
 ADD vn-link-cli_$TARGETARCH$TARGETVARIANT /usr/bin/vn-link-cli
 RUN apk update && \
-    apk add iptables-legacy && \ 
+    apk add iptables-legacy && \
     ln -sf /usr/sbin/iptables-legacy /usr/sbin/iptables && \
     ln -sf /usr/sbin/ip6tables-legacy /usr/sbin/ip6tables
 
@@ -30,6 +30,8 @@ RUN echo '#!/bin/sh' > /usr/bin/run.sh && \
 
 # 设置 run.sh 为可执行
 RUN chmod +x /usr/bin/run.sh
+
+STOPSIGNAL SIGINT
 
 # 设置 entrypoint
 ENTRYPOINT ["/usr/bin/run.sh"]

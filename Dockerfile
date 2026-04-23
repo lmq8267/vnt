@@ -28,6 +28,20 @@ RUN echo '#!/bin/sh' > /usr/bin/run.sh && \
     echo '  exec /usr/bin/vnt-cli "$@"' >> /usr/bin/run.sh && \
     echo 'fi' >> /usr/bin/run.sh
 
+# 创建日志文件
+RUN echo 'refresh_rate: 30 seconds' > /usr/bin/log4rs.yaml && \
+    echo '' >> /usr/bin/log4rs.yaml && \
+    echo 'appenders:' >> /usr/bin/log4rs.yaml && \
+    echo '  console:' >> /usr/bin/log4rs.yaml && \
+    echo '    kind: console' >> /usr/bin/log4rs.yaml && \
+    echo '    encoder:' >> /usr/bin/log4rs.yaml && \
+    echo '      pattern: "{d(%Y-%m-%d %H:%M:%S)} [{l}] [{f}:{L}] {M}:{m}{n}"' >> /usr/bin/log4rs.yaml && \
+    echo '' >> /usr/bin/log4rs.yaml && \
+    echo 'root:' >> /usr/bin/log4rs.yaml && \
+    echo '  level: info' >> /usr/bin/log4rs.yaml && \
+    echo '  appenders:' >> /usr/bin/log4rs.yaml && \
+    echo '    - console'
+    
 # 设置 run.sh 为可执行
 RUN chmod +x /usr/bin/run.sh
 
